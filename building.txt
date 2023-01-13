@@ -1,0 +1,19 @@
+This book was developed using Ubuntu Linux packages including:
+
+texlive-latex-recommended
+texlive-latex-extra
+texlive-fonts-recommended
+texlive-bibtex-extra
+texlive-science
+python-pygments
+rubber
+biber
+
+# to build:
+
+rubber --clean main
+rubber --shell-escape --pdf main
+
+# to build just one chapter. e.g, the probability chapter:
+
+pdflatex -shell-escape -jobname=prob_chap "\includeonly{probability/prob}\input{main}"
