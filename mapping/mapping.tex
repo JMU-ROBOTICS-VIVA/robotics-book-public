@@ -1,21 +1,89 @@
 \chapter{Mapping}
 
 \section{Introduction}
+The path planning and localization methods we have seen so far require knowledge
+of the robot's environment.  Some of these methods rely on a map or grid.  
+How does this map get created and
+what data structures are used to represent this data?  The success of localization and planning algorithms is
+highly dependent on the quality and features that a map provides.  Consider the case of the 
+developing a self-driving car or vehicle, where an accurate map that is dynamic in nature (other
+obstacles are moving) is critical for success.
+
+So how do these maps get created?  Can a robot create these maps on its own?  This chapter 
+introduces \textit{robotic mapping} algorithms where an autonomous robot builds a map for use in other tasks like 
+planning and localization.  
 
 \section{Map Representations}
 
+Two popular data structures for representing maps are \textit{metric maps} and \textit{topological maps}.  In this
+section, we will focus on metric maps.
+
 \subsection{Metric Maps}
+Metric maps place place onto 2D or 3D maps using coordinates.  While other techniques exist, this
+most closely mimics other maps that we use (such as a map for driving or a floor plan of a house).  
+These maps get their names from the fact that precise locations allow for distance and other 
+``metric" computations.  
 
 \subsubsection{Occupancy Grids}
+Occupancy grids place either a 2d or 3d grid over a space.  This discretization marks each grid cell as occupied or free.  
+The application and robot environment would dictate the granularity of the grid structure.  
+
+
 \subsubsection{Quad-Trees and Oct-Trees}
+Occupancy grids work well but have some inefficiencies.  Consider an environment where the
+there are few obstacles and landmarks.  Large collections of grid cells would be empty.  This problem
+is amplified when considering a grid of fine granularity.  
 
-\subsection{Topological Maps}
+A more efficient approach can be seen in the \textit{quad} and \textit{oct-tree} data structures, which
+were made popular in the graphics world.  Consider the case of the quad-tree, which is utilized 
+in 2D maps.  Define the dimension of the smallest grid cell and call it $\delta$. The entire space is divided into 4 quadrants. 
+Consider each of the four quadrants: if the quadrant is free of obstacles, no further work is necessary for that quadrant.  If it
+is not obstacle free, that quadrant is divided into 4 quadrants and the method repeats until either the quadrant is obstacle free
+or the desired minimum granularity $\delta$ is reached.  Oct-trees represent the same idea except in 3D space.
+
+This approach is more efficient since it allows large sections of unoccupied space to be clustered together.
+
+%\subsection{Topological Maps}
 
 
-\section{Mapping with Perfect Odometry}
+%\section{Mapping with Perfect Odometry}
 
 \section{SLAM}
+If a robot is going to construct a map, part of this process certainly would need to keep track of
+where it is on the map it is constructing. But to keep track of where the robot is we need a map?
+This seems like the chicken and the egg problem.  However, tackling both mapping and localization
+at the same time seems natural and crucial in many practical robotic applications. 
 
-\subsection{EKF-SLAM}
+The simultaneous localization and mapping algorithm known as \textit{SLAM} addresses this challenge.  
+One of the first papers introducing this idea was Durrant-Whyte paper in 1996.
 
-\subsection{Rao-Blackwellized Particle Filters}
+
+
+Cite: H. Durrant-Whyte, D. Rye and E. Nebot, "Localization of automatic guided vehicles", Robotics Research: The 7th International Symposium (ISRR'95), pp. 613-625, 1996.
+
+\textit{SLAM} makes an estimate of both the robot's position ($x$) and the location of all known landmarks ($m$).  As the robot
+explores the environment, a history of all control inputs ($u$) and landmark observations ($z$) are kept.  All of
+these variables can be indexed by $k$, which represents the time index of the observations.  \textit{SLAM}
+represents the belief of the location of the robot and the landmarks at time $k$ as a probability
+distribution:
+
+
+\begin{center}
+\begin{equation}
+P(x_k,m | Z_{0:k}, U_{0:k}, x_0)
+\end{equation}
+\end{center}
+
+Things to add:
+\begin{itemize}
+\item time-update
+\item measurement-update
+\item extended Kalman filter slam (EKF-SLAM)
+\item Rao-Blackwellized particle filters
+\item challenges with loop closure
+
+\end{itemize}
+
+%\subsection{EKF-SLAM}
+
+%\subsection{Rao-Blackwellized Particle Filters}
